@@ -1,5 +1,4 @@
 import "./App.css";
-import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 import { useState } from "react";
 
