@@ -1,5 +1,4 @@
 import "./App.css";
-import { Typewriter } from "react-simple-typewriter";
 import { useState } from "react";
 
 function App() {
@@ -11,9 +10,13 @@ function App() {
     setResponse("Thinking...");
 
     try {
-      const res = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+        },
+        body: JSON.stringify({
           model: "gpt-4.1-mini",
           messages: [
             {
@@ -23,16 +26,11 @@ function App() {
             },
             { role: "user", content: question },
           ],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+        }),
+      });
 
-      setResponse(res.data.choices[0].message.content);
+      const data = await res.json();
+      setResponse(data.choices[0].message.content);
     } catch {
       setResponse("Unable to connect to AI.");
     }
@@ -57,17 +55,7 @@ function App() {
 
       {/* HERO */}
       <header className="hero">
-        <h1>
-          <Typewriter
-            words={[
-              "Cybersecurity Portfolio",
-              "Protecting Digital Systems",
-              "Future Federal Cyber Agent",
-            ]}
-            loop={true}
-            cursor
-          />
-        </h1>
+        <h1>Cybersecurity Portfolio</h1>
 
         <div className="intro-box">
           <h2>Hello, I'm Marvins Pierre</h2>
@@ -75,7 +63,7 @@ function App() {
           <p className="welcome">
             Welcome to my page! This is my cybersecurity portfolio where you can
             explore my skills, projects, and passion for protecting digital
-            systems and stopping cyber threats.
+            systems and preventing cyber threats.
           </p>
 
           <p>
