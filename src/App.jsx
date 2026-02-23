@@ -1,96 +1,135 @@
 import "./App.css";
+import axios from "axios";
+import { Typewriter } from "react-simple-typewriter";
+import { useState } from "react";
 
 function App() {
+  const [question, setQuestion] = useState("");
+  const [response, setResponse] = useState("");
+
+  const askAI = async () => {
+    if (!question) return;
+    setResponse("Thinking...");
+
+    try {
+      const res = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-4.1-mini",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a cybersecurity assistant helping visitors learn about Marvins Pierre.",
+            },
+            { role: "user", content: question },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setResponse(res.data.choices[0].message.content);
+    } catch {
+      setResponse("Unable to connect to AI.");
+    }
+  };
+
   return (
     <div className="container">
 
+      {/* MATRIX BACKGROUND */}
+      <div className="matrix"></div>
+
+      {/* NAV */}
       <nav className="nav">
         <h2>Marvins Pierre</h2>
         <div>
           <a href="#career">Career</a>
-          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
           <a href="#ai">AI</a>
           <a href="#contact">Contact</a>
         </div>
       </nav>
 
+      {/* HERO */}
       <header className="hero">
-        <h1>Cybersecurity Portfolio</h1>
-        <p>
-          Protecting systems, preventing cyber attacks, and securing the future.
-        </p>
+        <h1>
+          <Typewriter
+            words={[
+              "Cybersecurity Portfolio",
+              "Protecting Digital Systems",
+              "Future Federal Cyber Agent",
+            ]}
+            loop={true}
+            cursor
+          />
+        </h1>
+
+        <div className="intro-box">
+          <h2>Hello, I'm Marvins Pierre</h2>
+
+          <p className="welcome">
+            Welcome to my page! This is my cybersecurity portfolio where you can
+            explore my skills, projects, and passion for protecting digital
+            systems and stopping cyber threats.
+          </p>
+
+          <p>
+            I am an aspiring cybersecurity professional focused on network
+            security, threat detection, and safeguarding critical infrastructure.
+            My goal is to work in cybersecurity for the FBI or a federal agency,
+            helping defend systems and protect sensitive information.
+          </p>
+        </div>
       </header>
 
+      {/* CAREER */}
       <section id="career">
         <h2>Career Path</h2>
-
         <div className="grid">
-
-          <div className="card">
-            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" />
-            <h3>Cybersecurity Analyst</h3>
-            <p>Monitor networks and detect threats.</p>
-          </div>
-
-          <div className="card">
-            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b" />
-            <h3>Digital Forensics</h3>
-            <p>Investigate cybercrime and hacking cases.</p>
-          </div>
-
-          <div className="card">
-            <img src="https://images.unsplash.com/photo-1510519138101-570d1dca3d66" />
-            <h3>Federal Cyber Agent</h3>
-            <p>Protect national security systems.</p>
-          </div>
-
+          <div className="card">Cybersecurity Analyst</div>
+          <div className="card">Digital Forensics</div>
+          <div className="card">Federal Cyber Agent</div>
         </div>
       </section>
 
-      <section id="skills">
-        <h2>Technical Skills</h2>
-        <div className="skills">
-          <span>Python</span>
-          <span>Java</span>
-          <span>Networking</span>
-          <span>Cyber Threat Analysis</span>
-          <span>Problem Solving</span>
-          <span>Linux</span>
+      {/* PROJECTS */}
+      <section id="projects">
+        <h2>Projects</h2>
+        <div className="grid">
+          <div className="card">AI Card Game</div>
+          <div className="card">Network Scanner</div>
+          <div className="card">Security Monitor Tool</div>
         </div>
       </section>
 
+      {/* AI CHATBOT */}
       <section id="ai">
-        <h2>Ask My AI Assistant</h2>
-        <input id="question" placeholder="Ask about my cybersecurity skills..." />
+        <h2>Cyber AI Assistant</h2>
+        <input
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask about my cybersecurity skills..."
+        />
         <button onClick={askAI}>Ask AI</button>
-        <p id="response"></p>
+        <p className="response">{response}</p>
       </section>
 
+      {/* CONTACT */}
       <section id="contact">
         <h2>Contact Me</h2>
         <input placeholder="Your Email" />
         <button>Submit</button>
       </section>
 
-      <footer>
-        © 2026 Marvins Pierre | Cybersecurity Portfolio
-      </footer>
-
+      <footer>© 2026 Marvins Pierre</footer>
     </div>
   );
-}
-
-function askAI() {
-  const q = document.getElementById("question").value;
-  let answer = "I focus on cybersecurity and protecting digital systems.";
-
-  if (q.toLowerCase().includes("skills"))
-    answer = "My skills include Python, Java, Linux, networking, and cyber threat detection.";
-
-  if (q.toLowerCase().includes("career"))
-    answer = "My goal is to work in cybersecurity for the FBI or a federal agency.";
-
-  document.getElementById("response").innerText = answer;
 }
 
 export default App;
